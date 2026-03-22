@@ -61,3 +61,16 @@ def insert_game_genre(game_id, genre_id):
     conn.commit()
     cursor.close()
     conn.close()
+
+#check if we have game already before adding in genre
+def game_exists(app_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    sql = "SELECT COUNT(*) FROM GameGenres WHERE game_id = %s"
+    cursor.execute(sql, (app_id,))
+    result = cursor.fetchone()[0] > 0
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return result
