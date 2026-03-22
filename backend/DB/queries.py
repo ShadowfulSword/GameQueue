@@ -2,12 +2,14 @@ from DB.connections import get_connection
 from datetime import datetime
 
 
+#general layout:
+    #connect, make sql query, execute, close connections 
 
 def insert_user(steam_id):
     conn = get_connection()
     cursor = conn.cursor()
     
-    sql = "INSERT INTO Users (steam_id, created_at) VALUES (%s, %s)"
+    sql = "INSERT IGNORE INTO Users (steam_id, created_at) VALUES (%s, %s)"
     cursor.execute(sql, (steam_id, datetime.now()))
     user_id = cursor.lastrowid
 
@@ -21,7 +23,7 @@ def insert_game(game):
     cursor = conn.cursor()
     
     sql = "INSERT IGNORE INTO Games (app_id, title, avg_playtime) VALUES (%s, %s, %s)"
-    cursor.execute(sql,(game["app_id"], game["title"], game["playtime_mins"]) )
+    cursor.execute(sql,(game["appid"], game["name"], game["playtime_mins"]) )
 
     conn.commit()
     cursor.close()

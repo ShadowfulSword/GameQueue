@@ -4,6 +4,7 @@ import mysql.connector
 
 load_dotenv()
 
+#load env file, try and connect to the DB, return said connection or error
 def get_connection():
     host_name = os.getenv("DB_HOST")
     user_name = os.getenv("DB_USER")

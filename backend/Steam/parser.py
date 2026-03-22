@@ -1,3 +1,5 @@
+
+#take in all of the pased games and make it a list of dictionaries with only name, app_id and playtime
 def parser(passed_games):
     parsed_games = []
 
@@ -11,6 +13,7 @@ def parser(passed_games):
     return parsed_games
 
 
+#total_playtime is the combination of all playtime forevber across all platofrms
 def total_playtime(game):
     windows = game.get("playtime_windows_forever")
     mac = game.get("playtime_mac_forever")

@@ -2,11 +2,15 @@ import requests
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
-apikey = os.getenv("STEAM_API_KEY")
-steamid = os.getenv("STEAM_ID")
+#load_dotenv()
+#apikey = os.getenv("STEAM_API_KEY")
+#steamid = os.getenv("STEAM_ID")
 
 
+#make a call to the STEAM API, then if you get a response add games to a list of games, return games
+    #raise the errors: 
+        #try connect and return the error number for failed to connect
+        #if games is empty, the steam profile is private
 def get_games(steamid, apikey):
     url = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/"
     params = {
@@ -30,4 +34,4 @@ def get_games(steamid, apikey):
         return []
     return games
 
-print(get_games(steamid, apikey))
+#print(get_games(steamid, apikey))
