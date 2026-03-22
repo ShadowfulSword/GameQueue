@@ -39,3 +39,25 @@ def insert_user_library(user_id, app_id, playtime):
     conn.commit()
     cursor.close()
     conn.close()
+
+def insert_genre(genre_id, genre_name):
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    sql = "INSERT IGNORE INTO Genres (genre_id, genre_name) VALUES (%s, %s)"
+    cursor.execute(sql, (genre_id, genre_name))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+def insert_game_genre(game_id, genre_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    sql = "INSERT IGNORE INTO GameGenres (game_id, genre_id) VALUES (%s, %s)"
+    cursor.execute(sql, (game_id, genre_id))
+
+    conn.commit()
+    cursor.close()
+    conn.close()

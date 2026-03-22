@@ -22,3 +22,19 @@ def total_playtime(game):
     disc = game.get("playtime_disconnected")
 
     return (windows + mac + linux + deck + disc)
+
+#if you GET a raw_details AND it has genres listed return the list of id and details
+def parse_game_details(raw_details):
+    if(raw_details is None):
+        return[]
+    if(raw_details.get("genres") is not None):
+        parsed_details = []
+        for genres in raw_details["genres"]:
+            parsed_genre = {
+                "genre_id": int(genres["id"]),
+                "genre_name": genres["description"]
+            }
+            parsed_details.append(parsed_genre)
+        return parsed_details
+    else:
+        return []
