@@ -70,7 +70,56 @@ def game_exists(app_id):
     sql = "SELECT COUNT(*) FROM GameGenres WHERE game_id = %s"
     cursor.execute(sql, (app_id,))
     result = cursor.fetchone()[0] > 0
-    conn.commit()
+
     cursor.close()
     conn.close()
     return result
+
+#select the genre id and for this user, get the games played/playing and what genre they have in common
+def get_played_genres(user_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = "SELECT GameGenres.genre_id FROM UserLibrary JOIN GameGenres ON UserLibrary.app_id = GameGenres.game_id WHERE UserLibrary.user_id = %s AND UserLibrary.status IN ('playing', 'completed')"
+    cursor.execute(sql, (user_id,))
+    result = cursor.fetchall()
+    
+    cursor.close()
+    conn.close()
+    return [row[0] for row in result]
+
+def get_backlog_games(user_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = "SELECT UserLibrary.app_id, UserLibrary.playtime_mins FROM UserLibrary WHERE UserLibrary.user_id = %s AND UserLibrary.status = 'backlog'"
+    cursor.execute(sql, (user_id,))
+    result = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+    return [{"appid": row[0], "playtime_mins": row[1]} for row in result]
+
+def get_game_genres(app_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = "SELECT genre_id FROM GameGenres WHERE game_id =%s"
+    cursor.execute(sql, (app_id,))
+    result = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+    return [row[0] for row in result]
+
+def get_all_genre():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = "SELECT genre_id FROM Genres"
+    cursor.execute(sql)
+    result = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+    return {genre_id: position for position, (genre_id,) in enumerate(result)}
