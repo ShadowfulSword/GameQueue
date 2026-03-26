@@ -1,7 +1,6 @@
 from Steam.clients import get_games, get_game_details
 from Steam.parser import parser, parse_game_details
 from DB.queries import insert_user, insert_game, insert_user_library, insert_genre, insert_game_genre, game_exists
-from algorithm.recommender import get_recommendations
 from dotenv import load_dotenv
 import os
 
@@ -25,6 +24,7 @@ def import_user_library(steamid,apikey):
         insert_user_library(user_id, game.get("appid"), game.get("playtime_mins"))
 
 if __name__ == "__main__":
+    from algorithm.recommender import get_recommendations
     import_user_library(steamid, apikey)
     
     # get user_id 1 (first imported user)
