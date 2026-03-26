@@ -124,3 +124,27 @@ def get_all_genre():
     cursor.close()
     conn.close()
     return {genre_id: position for position, (genre_id,) in enumerate(result)}
+
+def get_library(user_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = "SELECT UserLibrary.app_id, UserLibrary.playtime_mins, UserLibrary.status, Games.title FROM UserLibrary JOIN Games ON UserLibrary.app_id = Games.app_id WHERE user_id = %s"
+    cursor.execute(sql, (user_id,))
+    result = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+    return [{"appid": row[0], "title": row[3], "playtime_mins": row[1], "status": row[2]} for row in result]
+
+
+def update_game_status(user_id, app_id, status):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = "UPDATE UserLibrary SET status = %s WHERE user_id = %s AND app_id = %s"
+    cursor.execute(sql, (status, user_id, app_id))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
