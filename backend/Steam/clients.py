@@ -2,6 +2,7 @@ import requests
 from dotenv import load_dotenv
 import os
 import time
+from howlongtobeatpy import HowLongToBeat
 
 #load_dotenv()
 #apikey = os.getenv("STEAM_API_KEY")
@@ -56,3 +57,11 @@ def get_game_details(appid):
 
     
 #print(get_game_details(570))
+
+def get_hltb_time(title):
+    result = HowLongToBeat().search(title)
+    if result is not None and len(result)>0:
+        best_element = max(result, key=lambda element: element.similarity)
+        return(best_element.main_extra * 60)
+    
+    return None

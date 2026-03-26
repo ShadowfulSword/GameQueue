@@ -11,7 +11,8 @@ def insert_user(steam_id):
     
     sql = "INSERT IGNORE INTO Users (steam_id, created_at) VALUES (%s, %s)"
     cursor.execute(sql, (steam_id, datetime.now()))
-    user_id = cursor.lastrowid
+    cursor.execute("SELECT user_id FROM Users WHERE steam_id = %s", (steam_id,))
+    user_id = cursor.fetchone()[0]
 
     conn.commit()
     cursor.close()
@@ -33,7 +34,7 @@ def insert_user_library(user_id, app_id, playtime):
     conn = get_connection()
     cursor = conn.cursor()
     
-    sql = "INSERT INTO UserLibrary (user_id, app_id, playtime_mins, status) VALUES (%s, %s, %s, 'backlog')"
+    sql = "INSERT IGNORE INTO UserLibrary (user_id, app_id, playtime_mins, status) VALUES (%s, %s, %s, 'backlog')"
     cursor.execute(sql, (user_id, app_id, playtime))
 
     conn.commit()
@@ -92,13 +93,13 @@ def get_backlog_games(user_id):
     conn = get_connection()
     cursor = conn.cursor()
 
-    sql = "SELECT UserLibrary.app_id, UserLibrary.playtime_mins FROM UserLibrary WHERE UserLibrary.user_id = %s AND UserLibrary.status = 'backlog'"
+    sql = "SELECT UserLibrary.app_id, UserLibrary.playtime_mins, Games.title FROM UserLibrary JOIN Games On UserLibrary.app_id = Games.app_id WHERE UserLibrary.user_id = %s AND UserLibrary.status = 'backlog'"
     cursor.execute(sql, (user_id,))
     result = cursor.fetchall()
 
     cursor.close()
     conn.close()
-    return [{"appid": row[0], "playtime_mins": row[1]} for row in result]
+    return [{"appid": row[0], "playtime_mins": row[1], "title": row[2]} for row in result]
 
 def get_game_genres(app_id):
     conn = get_connection()
