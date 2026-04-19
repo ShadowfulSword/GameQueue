@@ -58,6 +58,7 @@ def get_game_details(appid):
     
 #print(get_game_details(570))
 
+#make a call to the HLTB api and only get the top game according to simmilarity (abt 80% likeness)
 def get_hltb_time(title):
     #print(f"fetching HTLY for {title}")
     result = HowLongToBeat().search(title)
