@@ -26,11 +26,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+#Request the body for the status
+#Literal will make it so only our specific statuses are accepted
 class StatusUpdate(BaseModel):
     status: Literal["backlog", "playing", "completed"]
 
-
+#Trigger the import command for a given user -- gather the user's (steam_id) library
+#steam_id is sent as a url
 @app.post("/importlib/{steam_id}")
 def importlib(steam_id: str):
     result = import_user_library(steam_id, apikey)
@@ -46,7 +48,6 @@ def importlib(steam_id: str):
         "user_id": user_id,
     }
 
-
 @app.get("/user/by-steam/{steam_id}")
 def user_by_steam(steam_id: str):
     try:
@@ -57,7 +58,7 @@ def user_by_steam(steam_id: str):
         raise HTTPException(status_code=404, detail="Steam user not found")
     return {"user_id": uid}
 
-
+#Return the top 5 recommended games for a user
 @app.get("/recommendations/{user_id}")
 @app.get("/reccomendations/{user_id}")
 def recommendations(user_id: int):
@@ -66,6 +67,7 @@ def recommendations(user_id: int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+#Return the user's full lib
 @app.get("/library/{user_id}")
 def library(user_id: int):
     try:
@@ -73,6 +75,7 @@ def library(user_id: int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+#Update the status for a game
 @app.put("/library/{user_id}/{app_id}/status")
 def update_game(user_id: int, app_id:int, body: StatusUpdate):
     try:

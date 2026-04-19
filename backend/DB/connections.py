@@ -10,6 +10,7 @@ load_dotenv()
 
 #load env file, try and connect to the DB, return said connection or error
 def get_connection():
+    #get the database creds and env vars
     host_name = os.getenv("DB_HOST")
     user_name = os.getenv("DB_USER")
     pwd = os.getenv("DB_PASSWORD")
@@ -17,6 +18,8 @@ def get_connection():
     port = int(os.getenv("DB_PORT", "3306"))
 
     try:
+        #Try and connect to a MySQL database
+        #On success return the connection
         conn = mysql.connector.connect(
             host=host_name,
             port=port,
@@ -26,4 +29,5 @@ def get_connection():
         )
         return conn
     except mysql.connector.Error as err:
+        #on failure, print the error and return None
         print(f"Error: {err}")
