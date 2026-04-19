@@ -15,11 +15,11 @@ def parser(passed_games):
 
 #total_playtime is the combination of all playtime forevber across all platofrms
 def total_playtime(game):
-    windows = game.get("playtime_windows_forever")
-    mac = game.get("playtime_mac_forever")
-    linux = game.get("playtime_linux_forever")
-    deck = game.get("playtime_deck_forever")
-    disc = game.get("playtime_disconnected")
+    windows = game.get("playtime_windows_forever", 0)
+    mac = game.get("playtime_mac_forever", 0)
+    linux = game.get("playtime_linux_forever", 0)
+    deck = game.get("playtime_deck_forever", 0)
+    disc = game.get("playtime_disconnected", 0)
 
     return (windows + mac + linux + deck + disc)
 

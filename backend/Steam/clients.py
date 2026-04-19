@@ -25,15 +25,15 @@ def get_games(steamid, apikey):
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        print(f"HTTP error: {e}")
-        return []
+        raise ValueError(f"Steam API error: {e}")
     data = response.json()
 
     games = data.get("response", {}) .get("games")
 
     if games is None:
-        print ("No games found, profile possibly private")
-        return []
+        raise ValueError("Steam profile is private or Steam ID is invalid")
+    if games and "playtime_forever" not in games[0]:
+        raise ValueError("Steam game details are private - please set games to public")
     return games
 
 #print(get_games(steamid, apikey))
@@ -59,9 +59,12 @@ def get_game_details(appid):
 #print(get_game_details(570))
 
 def get_hltb_time(title):
+    #print(f"fetching HTLY for {title}")
     result = HowLongToBeat().search(title)
+    #print(f"Result: {result}")
     if result is not None and len(result)>0:
         best_element = max(result, key=lambda element: element.similarity)
         return(best_element.main_extra * 60)
     
     return None
+

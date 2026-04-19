@@ -148,3 +148,44 @@ def update_game_status(user_id, app_id, status):
     conn.commit()
     cursor.close()
     conn.close()
+
+def get_hltb_cache(app_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = "SELECT hltb_playtime FROM Games WHERE app_id = %s"
+    cursor.execute(sql, (app_id,))
+    result = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+    return result[0] if result else None
+
+def update_hltb_cache(app_id, hltb_time):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = "UPDATE Games SET hltb_playtime = %s WHERE app_id = %s"
+    cursor.execute(sql, (hltb_time, app_id))
+
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+def get_all_backlog_genres(user_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    sql = "SELECT GameGenres.game_id, GameGenres.genre_id FROM UserLibrary JOIN GameGenres ON UserLibrary.app_id = GameGenres.game_id WHERE UserLibrary.user_id = %s AND UserLibrary.status = 'backlog'"
+    cursor.execute(sql, (user_id,))
+    result = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+    result_dict = {}
+    for app_id, genre_id in result:
+        if app_id not in result_dict:
+            result_dict[app_id] = []
+        result_dict[app_id].append(genre_id)
+    return result_dict
