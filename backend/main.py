@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from Steam.clients import get_games, get_game_details, get_hltb_time
 from Steam.parser import parser, parse_game_details
 from DB.queries import insert_user, insert_game, insert_user_library, insert_genre, insert_game_genre, game_exists, get_hltb_cache, update_hltb_cache
@@ -5,11 +7,13 @@ from algorithm.recommender import get_recommendations
 from dotenv import load_dotenv
 import os
 
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+load_dotenv(_REPO_ROOT / ".env")
 load_dotenv()
 apikey = os.getenv("STEAM_API_KEY")
 steamid = os.getenv("STEAM_ID")
 
-def import_user_library(steamid,apikey):
+def import_user_library(steamid, apikey):
     try:
         games = get_games(steamid, apikey)
         parsed_games = parser(games)
@@ -25,8 +29,12 @@ def import_user_library(steamid,apikey):
                     insert_genre(genre.get("genre_id"), genre.get("genre_name"))
                     insert_game_genre(game.get("appid"), genre.get("genre_id"))
             insert_user_library(user_id, game.get("appid"), game.get("playtime_mins"))
+        return {"user_id": user_id}
     except ValueError as e:
         print(f"Error: {e}")
+        return {"error": str(e)}
+    except Exception as e:
+        print(f"Import library error: {e}")
         return {"error": str(e)}
 
 

@@ -50,10 +50,10 @@ def get_game_details(appid):
         print(f"HTTP error: {e}")
         return None
     data = response.json()
-    if(data[str(appid)]["success"]):
-        return data[str(appid)]["data"]
-    else:
+    entry = data.get(str(appid))
+    if not entry or not entry.get("success"):
         return None
+    return entry.get("data")
 
     
 #print(get_game_details(570))

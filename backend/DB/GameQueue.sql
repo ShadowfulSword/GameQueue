@@ -9,7 +9,8 @@ create table Games(
 	app_id int Primary key, 
     title text,
     avg_playtime int,
-    steam_rating double
+    steam_rating double,
+    hltb_playtime int null
 );
 
 create table UserLibrary(

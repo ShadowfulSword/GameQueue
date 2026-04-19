@@ -16,6 +16,8 @@ def get_user_preferences(user_id):
 #The game vector represents the game's genres, value is 1 if the game belongs to the genre that is in the user's prefrence
 #Cosine Sim finds the angle between 2 vectors and the closer to 1 it is the more simmilar the game is
 def score_game(game, user_prefrences, genre_index, genre_dict):
+    if not genre_index:
+        return 0.0
     user_vector = np.zeros(len(genre_index))
     for genre_id, count in user_prefrences.items():
         if genre_id in genre_index:
@@ -46,6 +48,8 @@ def score_game(game, user_prefrences, genre_index, genre_dict):
 def get_recommendations(user_id):
     prefrences = get_user_preferences(user_id)
     genre_index = get_all_genre()
+    if not genre_index:
+        return []
     backlog = get_backlog_games(user_id)
     backlog_genre = get_all_backlog_genres(user_id)
 
