@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Barlow:wght@300;400;500&display=swap');
+.container{
+    min-height: 100vh;
+    width: 100%;
+    background-color: #24282f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card{
+    width: 100%;
+    align-items: center;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo{
+    width: 210px;
+    height: 210px;
+    margin-bottom: 1rem;
+}
+
+.title{
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: #c7d5e0;
+    letter-spacing: 1px;
+    margin: 0 0 2.5rem;
+}
+
+.tittle span{
+    color: #66c0f4;
+}
+
+.subtitle{
+    font-family: 'Rajdhani';
+    font-size: 13px;
+    color: #8f98a0;
+    font-weight: 300;
+    letter-spacing: 1px;
+    margin: 0 0 2.5rem;
+}
+
+.input{
+    width: 100%;
+    background: #16202d;
+    border: 1px solid #2a475e;
+    color: white;
+    font-family: 'Barlow' sans-serif;
+    font-size: 15px;
+    padding: 14px 16px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.input:focus{
+    border-color: #66c0f4;
+}
+
+.input::placeholder{
+    color: #4a554a
+}
+
+.button{
+    width: 100%;
+    background-color: #66c0f4;
+    color: 24282f;
+    border: none;
+    padding: 12px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+}
+
+.button:hover{
+    background: #4282a7;
+}
+
+.divider{
+    width: 100%;
+    height: 1px;
+    background: #2a475e
+    margin 1.5rem 0;
+}
+
+.hint{
+    font-family: "Barlow", sans-serif;
+    font-size: 12px;
+    color: #4a554a;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.hint a{
+    color: #66c0f4;
+    text-decoration: none;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body, #root {
+    height: 100%;
+    width: 100%;
+    background-color: #24282f;
+    margin: 0;
+    padding: 0;
+}
+
+.error{
+    color: #e74c3c;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 8px;
+}
