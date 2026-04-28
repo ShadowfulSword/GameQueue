@@ -1,29 +1,31 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { getLibraryGenres, savePreferences } from '../api/index.js'
+import { getLibraryGenres, savePreferences, getSavedPreferences } from '../api/index.js'
 import styles from './Profile.module.css'
 
 export default function Profile() {
   const [genres, setGenres] = useState([])
   const [selectedGenres, setSelectedGenres] = useState([])
+  const [saved, setSaved] = useState(false)
   const [loading, setLoading] = useState(false)
-
   const navigate = useNavigate()
   const location = useLocation()
   const userId = location.state?.user_id ?? 1
 
   useEffect(() => {
-    getLibraryGenres(userId).then(data => {
-      setGenres(data)
-      setSelectedGenres(data.map(g => g.genre_id)) // preselect existing
+    Promise.all([
+      getLibraryGenres(userId),
+      getSavedPreferences(userId)
+    ]).then(([allGenres, savedPrefs]) => {
+      setGenres(allGenres)
+      setSelectedGenres(savedPrefs)
     })
   }, [])
 
   function toggleGenre(id) {
+    setSaved(false)
     setSelectedGenres(prev =>
-      prev.includes(id)
-        ? prev.filter(g => g !== id)
-        : [...prev, id]
+      prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id]
     )
   }
 
@@ -31,6 +33,7 @@ export default function Profile() {
     setLoading(true)
     try {
       await savePreferences(userId, selectedGenres)
+      setSaved(true)
     } catch (e) {
       console.error('Failed to save preferences', e)
     } finally {
@@ -53,13 +56,10 @@ export default function Profile() {
         >
           <img src="/GameQueueLogo.png" alt="GameQueue" />
         </div>
-
         {tabs.map(tab => (
           <div
             key={tab.path}
-            className={`${styles.navTab} ${
-              location.pathname === tab.path ? styles.navTabActive : ''
-            }`}
+            className={`${styles.navTab} ${location.pathname === tab.path ? styles.navTabActive : ''}`}
             onClick={() => navigate(tab.path, { state: { user_id: userId } })}
           >
             {tab.label}
@@ -69,17 +69,28 @@ export default function Profile() {
 
       <div className={styles.content}>
         <div className={styles.card}>
-          <h2 className={styles.title}>Your Genre Preferences</h2>
+          <div className={styles.cardHeader}>
+            <div>
+              <h2 className={styles.title}>Genre Preferences</h2>
+              <p className={styles.subtitle}>Select the genres you enjoy — this shapes your Queue recommendations.</p>
+            </div>
+            <button
+              className={`${styles.saveBtn} ${saved ? styles.saveBtnSaved : ''}`}
+              onClick={handleSave}
+              disabled={loading}
+            >
+              {loading ? 'Saving...' : saved ? 'Saved ✓' : 'Save Preferences'}
+            </button>
+          </div>
 
+          <div className={styles.divider} />
+
+          <div className={styles.sectionLabel}>Your Library Genres</div>
           <div className={styles.genreGrid}>
             {genres.map(g => (
               <button
                 key={g.genre_id}
-                className={`${styles.genreBtn} ${
-                  selectedGenres.includes(g.genre_id)
-                    ? styles.genreBtnActive
-                    : ''
-                }`}
+                className={`${styles.genreBtn} ${selectedGenres.includes(g.genre_id) ? styles.genreBtnActive : ''}`}
                 onClick={() => toggleGenre(g.genre_id)}
               >
                 {g.genre_name}
@@ -87,13 +98,17 @@ export default function Profile() {
             ))}
           </div>
 
-          <button
-            className={styles.saveBtn}
-            onClick={handleSave}
-            disabled={loading}
-          >
-            {loading ? 'Saving...' : 'Save Preferences'}
-          </button>
+          <div className={styles.footer}>
+            <span className={styles.selectedCount}>
+              {selectedGenres.length} genre{selectedGenres.length !== 1 ? 's' : ''} selected
+            </span>
+            <button
+              className={styles.clearBtn}
+              onClick={() => { setSelectedGenres([]); setSaved(false) }}
+            >
+              Clear all
+            </button>
+          </div>
         </div>
       </div>
     </div>

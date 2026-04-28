@@ -38,3 +38,8 @@ export async function saveStatuses(userId, statuses) {
   const response = await api.post(`/onboarding/${userId}/statuses`, { statuses })
   return response.data
 }
+
+export async function getSavedPreferences(userId) {
+  const response = await api.get(`/onboarding/${userId}/preferences`)
+  return response.data
+}

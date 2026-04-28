@@ -127,3 +127,12 @@ def save_statuses(user_id: int, body: StatusesBody):
         return {"message": "Statuses saved"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+@app.get("/onboarding/{user_id}/preferences")
+def get_preferences(user_id: int):
+    try:
+        from DB.queries import get_saved_preferences
+        return get_saved_preferences(user_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
