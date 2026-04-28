@@ -4,7 +4,7 @@ import { importLibrary } from "../api/index.js";
 import { useNavigate } from 'react-router-dom'
 export default function Landing(){
     const [steamId, setSteamId] = useState('');
-    console.log(steamId);
+    //console.log(steamId);
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const navigate = useNavigate()

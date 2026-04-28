@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from pydantic import BaseModel
 from typing import Literal
 import os
+from import_hltb import import_hltb
 
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -36,6 +37,7 @@ class StatusUpdate(BaseModel):
 @app.post("/importlib/{steam_id}")
 def importlib(steam_id: str):
     result = import_user_library(steam_id, apikey)
+    import_hltb()
     if not result:
         raise HTTPException(status_code=400, detail="Import failed")
     if "error" in result:

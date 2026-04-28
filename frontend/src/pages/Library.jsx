@@ -5,16 +5,24 @@ import styles from './Library.module.css'
 
 export default function Library() {
   const [games, setGames] = useState([])
-  const navigate = useNavigate()
-  const location = useLocation()
-  const userId = location.state?.user_id ?? 1 //get the user ID or set it to 1 if fails
+  const [failedImages, setFailedImages] = useState({})
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState(null)
   const [showFilter, setShowFilter] = useState(false)
   const [genres, setGenres] = useState([])
   const [activeStatuses, setActiveStatuses] = useState([])
   const [activeGenres, setActiveGenres] = useState([])
+  const [hltbRange, setHltbRange] = useState([0, 0])
   const filterRef = useRef(null)
+  const sliderRef = useRef(null)
+  const dragging = useRef(null)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const userId = location.state?.user_id ?? 1
+
+  const HLTB_MAX = Math.ceil(
+    Math.max(0, ...games.map(g => g.hltb_playtime ? g.hltb_playtime / 60 : 0))
+  ) || 200
+
   useEffect(() => {
     getLibrary(userId).then(data =>
       setGames([...data].sort((a, b) => a.title.localeCompare(b.title)))
@@ -22,8 +30,13 @@ export default function Library() {
     getLibraryGenres(userId).then(setGenres)
   }, [])
 
+  useEffect(() => {
+    if (games.length > 0) {
+      const max = Math.ceil(Math.max(...games.map(g => g.hltb_playtime ? g.hltb_playtime / 60 : 0))) || 200
+      setHltbRange([0, max])
+    }
+  }, [games])
 
-  //close dropdown
   useEffect(() => {
     function handleClick(e) {
       if (filterRef.current && !filterRef.current.contains(e.target))
@@ -32,6 +45,33 @@ export default function Library() {
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
+
+  function handleSliderMouseDown(e) {
+    const rect = sliderRef.current.getBoundingClientRect()
+    const pct = (e.clientX - rect.left) / rect.width
+    const val = Math.round(pct * HLTB_MAX)
+    const distToMin = Math.abs(val - hltbRange[0])
+    const distToMax = Math.abs(val - hltbRange[1])
+    dragging.current = distToMin <= distToMax ? 'min' : 'max'
+
+    function onMove(e) {
+      const pct = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width))
+      const val = Math.round(pct * HLTB_MAX)
+      setHltbRange(prev => {
+        if (dragging.current === 'min') return [Math.min(val, prev[1] - 1), prev[1]]
+        return [prev[0], Math.max(val, prev[0] + 1)]
+      })
+    }
+
+    function onUp() {
+      dragging.current = null
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseup', onUp)
+    }
+
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onUp)
+  }
 
   function toggleStatus(s) {
     setActiveStatuses(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])
@@ -44,14 +84,20 @@ export default function Library() {
   function clearFilters() {
     setActiveStatuses([])
     setActiveGenres([])
+    setHltbRange([0, HLTB_MAX])
   }
 
-  const activeCount = activeStatuses.length + activeGenres.length
+  const activeCount = activeStatuses.length + activeGenres.length + (hltbRange[0] > 0 || hltbRange[1] < HLTB_MAX ? 1 : 0)
 
   const visibleGames = games
     .filter(g => !search || g.title.toLowerCase().includes(search.toLowerCase()))
     .filter(g => activeStatuses.length === 0 || activeStatuses.includes(g.status))
     .filter(g => activeGenres.length === 0 || activeGenres.every(genre => g.genres.includes(genre)))
+    .filter(g => {
+      const hours = g.hltb_playtime ? g.hltb_playtime / 60 : null
+      if (hours === null) return hltbRange[0] === 0
+      return hours >= hltbRange[0] && hours <= hltbRange[1]
+    })
 
   async function handleStatus(appid, status) {
     try {
@@ -79,7 +125,6 @@ export default function Library() {
     { label: 'Queue', path: '/queue' },
     { label: 'Profile', path: '/profile' },
   ]
-
 
   return (
     <div className={styles.pageWrapper}>
@@ -150,6 +195,37 @@ export default function Library() {
                 </div>
               </div>
 
+              <div className={styles.filterDivider} />
+
+              <div className={styles.filterSection}>
+                <span className={styles.filterSectionLabel}>HLTB Hours</span>
+                <div className={styles.rangeDisplay}>
+                  {hltbRange[0]}h — {hltbRange[1] >= HLTB_MAX ? `${HLTB_MAX}h+` : `${hltbRange[1]}h`}
+                </div>
+                <div
+                  className={styles.sliderWrap}
+                  ref={sliderRef}
+                  onMouseDown={handleSliderMouseDown}
+                >
+                  <div className={styles.sliderBg} />
+                  <div
+                    className={styles.sliderTrack}
+                    style={{
+                      left: `${(hltbRange[0] / HLTB_MAX) * 100}%`,
+                      right: `${100 - (hltbRange[1] / HLTB_MAX) * 100}%`
+                    }}
+                  />
+                  <div
+                    className={styles.sliderThumb}
+                    style={{ left: `${(hltbRange[0] / HLTB_MAX) * 100}%` }}
+                  />
+                  <div
+                    className={styles.sliderThumb}
+                    style={{ left: `${(hltbRange[1] / HLTB_MAX) * 100}%` }}
+                  />
+                </div>
+              </div>
+
               {activeCount > 0 && (
                 <>
                   <div className={styles.filterDivider} />
@@ -174,31 +250,42 @@ export default function Library() {
                 {g} ×
               </span>
             ))}
+            {(hltbRange[0] > 0 || hltbRange[1] < HLTB_MAX) && (
+              <span className={styles.chip} onClick={() => setHltbRange([0, HLTB_MAX])}>
+                HLTB {hltbRange[0]}h–{hltbRange[1] >= HLTB_MAX ? `${HLTB_MAX}h+` : `${hltbRange[1]}h`} ×
+              </span>
+            )}
           </div>
         )}
       </div>
 
-      <div className={styles.grid}>
-        {visibleGames.length === 0 && (
-          <div className={styles.emptyWrapper}>
-            <div className={styles.emptyState}>
-              {activeStatuses.length === 1
-                ? `You currently have no ${activeStatuses[0]} games`
-                : activeGenres.length > 0
-                  ? `No games match the selected filters`
-                  : `Your library is empty`
-              }
-            </div>
+      {visibleGames.length === 0 && (
+        <div className={styles.emptyWrapper}>
+          <div className={styles.emptyState}>
+            {activeStatuses.length === 1
+              ? `You currently have no ${activeStatuses[0]} games`
+              : activeGenres.length > 0
+                ? `No games match the selected filters`
+                : `Your library is empty`
+            }
           </div>
-        )}
+        </div>
+      )}
+
+      <div className={styles.grid}>
         {visibleGames.map(game => (
           <div className={styles.card} key={game.appid}>
             <img
               className={styles.cover}
-              src={`https://cdn.akamai.steamstatic.com/steam/apps/${game.appid}/library_600x900.jpg`}
+              src={
+                failedImages[game.appid]
+                  ? `https://cdn.akamai.steamstatic.com/steam/apps/${game.appid}/header.jpg`
+                  : `https://cdn.akamai.steamstatic.com/steam/apps/${game.appid}/library_600x900.jpg`
+              }
               alt={game.title}
               onError={(e) => {
-                e.target.src = `https://cdn.akamai.steamstatic.com/steam/apps/${game.appid}/header.jpg`
+                e.target.onerror = null
+                setFailedImages(prev => ({ ...prev, [game.appid]: true }))
               }}
             />
             <div className={styles.info}>
