@@ -1,14 +1,21 @@
 from collections import Counter
-from DB.queries import get_played_genres, get_backlog_games, get_game_genres, get_all_genre, get_hltb_cache, get_all_backlog_genres
+from DB.queries import get_played_genres, get_backlog_games, get_game_genres, get_all_genre, get_hltb_cache, get_all_backlog_genres, get_games_by_ids, get_saved_preferences
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
-#return how often and whcih genre appears in the user's backlog
+
+
+#make it so we have a fallback for user prefrences based on their saved prefrence games if the user has no playing or completed games
 def get_user_preferences(user_id):
-    played_genres = get_played_genres(user_id)
-    return Counter(played_genres)
-
-
+    played = get_played_genres(user_id)
+    if played:
+        preferences = {}
+        for genre_id in played:
+            preferences[genre_id] = preferences.get(genre_id, 0) + 1
+        return preferences
+    # cold start fallback
+    saved = get_saved_preferences(user_id)
+    return {genre_id: 1 for genre_id in saved}
 
 #simple cosine sim algo:
 #The user's preference vector refers to a genre in the database and teh value is how many times the user has played a game
@@ -59,4 +66,5 @@ def get_recommendations(user_id):
         scored_game.append((game["appid"], score))
 
     sorted_game = sorted(scored_game, key=lambda x:x[1], reverse=True)
-    return [appid for appid, score in sorted_game[:5]]
+    top_ids = [appid for appid, score in sorted_game[:5]]
+    return get_games_by_ids(top_ids)

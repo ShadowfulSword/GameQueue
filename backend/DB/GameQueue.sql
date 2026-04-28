@@ -5,12 +5,15 @@ Create table Users(
 	created_at datetime
 );
 
-create table Games(
-	app_id int Primary key, 
-    title text,
-    avg_playtime int,
-    steam_rating double,
-    hltb_playtime int null
+CREATE TABLE Games(
+    app_id INT PRIMARY KEY, 
+    title VARCHAR(255),
+    avg_playtime INT,
+    steam_rating DOUBLE,
+    hltb_playtime INT,
+    summary TEXT,
+    developer VARCHAR(255),
+    publisher VARCHAR(255)
 );
 
 create table UserLibrary(
@@ -61,5 +64,13 @@ CREATE TABLE GameGenres (
     genre_id INT NOT NULL,
     PRIMARY KEY (game_id, genre_id),
     FOREIGN KEY (game_id) REFERENCES Games(app_id),
+    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
+);
+
+CREATE TABLE UserPreferences (
+    user_id INT NOT NULL,
+    genre_id INT NOT NULL,
+    PRIMARY KEY (user_id, genre_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
     FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
 );

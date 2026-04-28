@@ -28,3 +28,13 @@ export async function getLibraryGenres(userID) {
   const response = await api.get(`/library/${userID}/genres`)
   return response.data
 }
+
+export async function savePreferences(userId, genreIds) {
+  const response = await api.post(`/onboarding/${userId}/preferences`, { genre_ids: genreIds })
+  return response.data
+}
+
+export async function saveStatuses(userId, statuses) {
+  const response = await api.post(`/onboarding/${userId}/statuses`, { statuses })
+  return response.data
+}

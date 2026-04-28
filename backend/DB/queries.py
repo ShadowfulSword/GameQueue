@@ -124,7 +124,7 @@ def get_backlog_games(user_id):
     conn = get_connection()
     cursor = _cursor(conn)
 
-    sql = "SELECT UserLibrary.app_id, UserLibrary.playtime_mins, Games.title FROM UserLibrary JOIN Games On UserLibrary.app_id = Games.app_id WHERE UserLibrary.user_id = %s AND UserLibrary.status = 'backlog'"
+    sql = "SELECT UserLibrary.app_id, UserLibrary.playtime_mins, Games.title FROM UserLibrary JOIN Games On UserLibrary.app_id = Games.app_id WHERE UserLibrary.user_id = %s AND UserLibrary.status IN ('backlog', 'playing')"
     cursor.execute(sql, (user_id,))
     result = cursor.fetchall()
 
@@ -221,7 +221,7 @@ def get_all_backlog_genres(user_id):
     conn = get_connection()
     cursor = _cursor(conn)
     
-    sql = "SELECT GameGenres.game_id, GameGenres.genre_id FROM UserLibrary JOIN GameGenres ON UserLibrary.app_id = GameGenres.game_id WHERE UserLibrary.user_id = %s AND UserLibrary.status = 'backlog'"
+    sql = "SELECT GameGenres.game_id, GameGenres.genre_id FROM UserLibrary JOIN GameGenres ON UserLibrary.app_id = GameGenres.game_id WHERE UserLibrary.user_id = %s AND UserLibrary.status IN ('backlog', 'playing')"
     cursor.execute(sql, (user_id,))
     result = cursor.fetchall()
 
@@ -254,3 +254,61 @@ def get_library_genres(user_id):
     cursor.close()
     conn.close()
     return [{"genre_id": row[0], "genre_name": row[1]} for row in result]
+
+#populate the summary, dev and publisher
+def update_game_details(app_id, summary, developer, publisher):
+    conn = get_connection()
+    cursor = _cursor(conn)
+    sql = "UPDATE Games SET summary = %s, developer = %s, publisher = %s WHERE app_id = %s"
+    cursor.execute(sql, (summary, developer, publisher, app_id))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+#get what game is what id for the queue
+def get_games_by_ids(app_ids):
+    conn = get_connection()
+    cursor = _cursor(conn)
+    placeholders = ','.join(['%s'] * len(app_ids))
+    sql = f"SELECT app_id, title, hltb_playtime, summary, developer, publisher FROM Games WHERE app_id IN ({placeholders})"
+    cursor.execute(sql, tuple(app_ids))
+    result = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [{"appid": row[0], "title": row[1], "hltb_playtime": row[2], "summary": row[3], "developer": row[4], "publisher": row[5]} for row in result]
+
+#put the user prefrences from the oboarding
+def insert_user_preferences(user_id, genre_ids):
+    conn = get_connection()
+    cursor = _cursor(conn)
+
+    sql = "INSERT IGNORE INTO UserPreferences (user_id, genre_id) VALUES (%s, %s)"
+    for genre_id in genre_ids:
+        cursor.execute(sql, (user_id, genre_id))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+#get user's saved prefreences on return use
+def get_saved_preferences(user_id):
+    conn = get_connection()
+    cursor = _cursor(conn)
+    sql = "SELECT genre_id FROM UserPreferences WHERE user_id = %s" 
+    cursor.execute(sql, (user_id,))
+    result = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [row[0] for row in result]
+
+#update a bunch at a time so we can do upadte in 1 go
+def bulk_update_status(user_id, statuses):
+    conn = get_connection()
+    cursor = _cursor(conn)
+
+    sql = "UPDATE UserLibrary SET status = %s WHERE user_id = %s AND app_id = %s"
+    for app_id, status in statuses.items():
+        cursor.execute(sql, (status, user_id, app_id))
+    conn.commit()
+    cursor.close()
+    conn.close()

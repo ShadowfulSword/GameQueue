@@ -129,14 +129,14 @@ export default function Library() {
   return (
     <div className={styles.pageWrapper}>
       <nav className={styles.navbar}>
-        <div className={styles.navLogo} onClick={() => navigate('/library')}>
+        <div className={styles.navLogo} onClick={() => navigate('/library', { state: { user_id: userId } })}>
           <img src="/GameQueueLogo.png" alt="GameQueue" />
         </div>
         {tabs.map(tab => (
           <div
             key={tab.path}
             className={`${styles.navTab} ${location.pathname === tab.path ? styles.navTabActive : ''}`}
-            onClick={() => navigate(tab.path)}
+            onClick={() => navigate(tab.path, { state: { user_id: userId } })}
           >
             {tab.label}
           </div>

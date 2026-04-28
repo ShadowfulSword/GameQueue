@@ -2,7 +2,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from DB.queries import get_library, update_game_status, get_user_id_by_steam, get_library_genres
+from DB.queries import get_library, update_game_status, get_user_id_by_steam, get_library_genres, insert_user_preferences, bulk_update_status
 from algorithm.recommender import get_recommendations
 from main import import_user_library
 from dotenv import load_dotenv
@@ -36,8 +36,8 @@ class StatusUpdate(BaseModel):
 #steam_id is sent as a url
 @app.post("/importlib/{steam_id}")
 def importlib(steam_id: str):
+    is_new_user = get_user_id_by_steam(steam_id) is None
     result = import_user_library(steam_id, apikey)
-    import_hltb()
     if not result:
         raise HTTPException(status_code=400, detail="Import failed")
     if "error" in result:
@@ -45,9 +45,12 @@ def importlib(steam_id: str):
     user_id = result.get("user_id")
     if user_id is None:
         raise HTTPException(status_code=500, detail="Import finished without user_id")
+    import_hltb()
+    print("IS NEW USER: ", is_new_user)
     return {
         "message": "Library imported successfully",
         "user_id": user_id,
+        "is_new_user": is_new_user
     }
 
 @app.get("/user/by-steam/{steam_id}")
@@ -61,12 +64,16 @@ def user_by_steam(steam_id: str):
     return {"user_id": uid}
 
 #Return the top 5 recommended games for a user
+import traceback
+from fastapi import HTTPException
+
 @app.get("/recommendations/{user_id}")
 @app.get("/reccomendations/{user_id}")
 def recommendations(user_id: int):
     try:
         return {"recommendations": get_recommendations(user_id)}
     except Exception as e:
+        traceback.print_exc()  # 🔴 THIS is what you’re missing
         raise HTTPException(status_code=500, detail=str(e))
 
 #Get all the generes for filtering
@@ -95,3 +102,28 @@ def update_game(user_id: int, app_id:int, body: StatusUpdate):
     return {"message": "Status updated successfully"}
 
 
+#onboarding process
+#specify how you want to send the prefrences and the status (as a list that the user makes)
+class PreferencesBody(BaseModel):
+    genre_ids: list[int]
+
+class StatusesBody(BaseModel):
+    statuses: dict[int, Literal["backlog", "playing", "completed"]]
+
+#Set the onboarding page for prefrences
+@app.post("/onboarding/{user_id}/preferences")
+def save_preferences(user_id: int, body: PreferencesBody):
+    try:
+        insert_user_preferences(user_id, body.genre_ids)
+        return {"message": "Preferences saved"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+#set the onboarding page for game status
+@app.post("/onboarding/{user_id}/statuses")
+def save_statuses(user_id: int, body: StatusesBody):
+    try:
+        bulk_update_status(user_id, body.statuses)
+        return {"message": "Statuses saved"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
