@@ -165,13 +165,13 @@ def get_library(user_id):
     conn = get_connection()
     cursor = _cursor(conn)
 
-    sql = "SELECT UserLibrary.app_id, UserLibrary.playtime_mins, UserLibrary.status, Games.title FROM UserLibrary JOIN Games ON UserLibrary.app_id = Games.app_id WHERE user_id = %s"
+    sql = "SELECT UserLibrary.app_id, UserLibrary.playtime_mins, UserLibrary.status, Games.title, Games.hltb_playtime, GROUP_CONCAT(Genres.genre_name ORDER BY Genres.genre_name SEPARATOR ',') as genres FROM UserLibrary JOIN Games ON UserLibrary.app_id = Games.app_id LEFT JOIN GameGenres ON Games.app_id = GameGenres.game_id LEFT JOIN Genres ON GameGenres.genre_id = Genres.genre_id WHERE UserLibrary.user_id = %s GROUP BY UserLibrary.app_id, UserLibrary.playtime_mins, UserLibrary.status, Games.title, Games.hltb_playtime"
     cursor.execute(sql, (user_id,))
     result = cursor.fetchall()
 
     cursor.close()
     conn.close()
-    return [{"appid": row[0], "title": row[3], "playtime_mins": row[1], "status": row[2]} for row in result]
+    return [{"appid": row[0], "playtime_mins": row[1], "status": row[2], "title": row[3], "hltb_playtime": row[4], "genres": row[5].split(",") if row[5] else []} for row in result]
 
 #Update a status for a game to playing or completed (sanitized and force checked in the API)
 def update_game_status(user_id, app_id, status):
@@ -235,3 +235,22 @@ def get_all_backlog_genres(user_id):
             result_dict[app_id] = []
         result_dict[app_id].append(genre_id)
     return result_dict
+
+
+#Get all the generes of the games and reutn it as a dict
+def get_library_genres(user_id):
+    conn = get_connection()
+    cursor = _cursor(conn)
+    sql = """
+        SELECT DISTINCT Genres.genre_id, Genres.genre_name
+        FROM UserLibrary
+        JOIN GameGenres ON UserLibrary.app_id = GameGenres.game_id
+        JOIN Genres ON GameGenres.genre_id = Genres.genre_id
+        WHERE UserLibrary.user_id = %s
+        ORDER BY Genres.genre_name
+    """
+    cursor.execute(sql, (user_id,))
+    result = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [{"genre_id": row[0], "genre_name": row[1]} for row in result]

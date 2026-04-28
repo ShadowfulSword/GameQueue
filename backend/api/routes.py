@@ -2,7 +2,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from DB.queries import get_library, update_game_status, get_user_id_by_steam
+from DB.queries import get_library, update_game_status, get_user_id_by_steam, get_library_genres
 from algorithm.recommender import get_recommendations
 from main import import_user_library
 from dotenv import load_dotenv
@@ -67,6 +67,14 @@ def recommendations(user_id: int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+#Get all the generes for filtering
+@app.get("/library/{user_id}/genres")
+def library_generes(user_id:int):
+    try:
+        return get_library_genres(user_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail= str(e))
+    
 #Return the user's full lib
 @app.get("/library/{user_id}")
 def library(user_id: int):
@@ -83,3 +91,5 @@ def update_game(user_id: int, app_id:int, body: StatusUpdate):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     return {"message": "Status updated successfully"}
+
+

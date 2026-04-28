@@ -19,7 +19,12 @@ export async function getReccomendation(userID){
   return response.data
 }
 
-export async function updateGameStatus(userId, appID, status) {
-  const response = await api.put(`/library/${userID}/${appIDd}/status`, {status})
+export async function updateGameStatus(userID, appID, status) {
+  const response = await api.put(`/library/${userID}/${appID}/status`, {status})
+  return response.data
+}
+
+export async function getLibraryGenres(userID) {
+  const response = await api.get(`/library/${userID}/genres`)
   return response.data
 }

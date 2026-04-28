@@ -12,13 +12,13 @@ export default function Landing(){
         setLoading(true)
         setError('')
         try{
-            await importLibrary(steamId)
+            const result = await importLibrary(steamId)
+            navigate('/library', {state: {user_id: result.user_id}})
         }catch(e){
             setError('Import failed. Check your Steam ID and try again')
         } finally {
             setLoading(false)
         }
-        navigate('/library')
     }
     return (
         <div className={styles.container}>
