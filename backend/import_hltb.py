@@ -87,10 +87,10 @@ def import_hltb(csv_path=None):
                 publisher if not pd.isna(publisher) else None
             )
 
-    print(f"\nMatched: {matched} / {len(games)}")
-    print(f"Unmatched ({len(not_matched)}):")
-    for t in not_matched:
-        print(f"  - {t}")
+    #print(f"\nMatched: {matched} / {len(games)}")
+    #print(f"Unmatched ({len(not_matched)}):")
+    #for t in not_matched:
+        #print(f"  - {t}")
     
 if __name__ == "__main__":
     import_hltb("hltb_data.csv")

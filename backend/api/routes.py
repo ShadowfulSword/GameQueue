@@ -38,6 +38,7 @@ class StatusUpdate(BaseModel):
 def importlib(steam_id: str):
     is_new_user = get_user_id_by_steam(steam_id) is None
     result = import_user_library(steam_id, apikey)
+    new_game_ids = result.get("new_game_ids", [])
     if not result:
         raise HTTPException(status_code=400, detail="Import failed")
     if "error" in result:
@@ -45,7 +46,8 @@ def importlib(steam_id: str):
     user_id = result.get("user_id")
     if user_id is None:
         raise HTTPException(status_code=500, detail="Import finished without user_id")
-    import_hltb()
+    if new_game_ids:
+        import_hltb()
     print("IS NEW USER: ", is_new_user)
     return {
         "message": "Library imported successfully",

@@ -18,10 +18,13 @@ def import_user_library(steamid, apikey):
         parsed_games = parser(games)
         user_id = insert_user(steamid)
 
+        new_game_ids = []
+
         for game in parsed_games:
-            insert_game(game)
+            appid = game.get("appid")
 
             if not game_exists(game.get("appid")):
+                insert_game(game)
                 game_deets = get_game_details(game.get("appid"))
                 parsed_deets = parse_game_details(game_deets)
                 for genre in parsed_deets:
@@ -30,7 +33,7 @@ def import_user_library(steamid, apikey):
             #print(f"{game.get('appid')} - playtime: {game.get('playtime_mins')}")
             insert_user_library(user_id, game.get("appid"), game.get("playtime_mins"))
 
-        return {"user_id": user_id}
+        return {"user_id": user_id, "new_game_ids": new_game_ids}
     except ValueError as e:
         print(f"Error: {e}")
         return {"error": str(e)}
