@@ -4,7 +4,10 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
 """
-    
+    Written by: Jake
+    Tested by: Alec
+    Debugged by: Jake
+    Commented and refactored by: Ali
 """
 
 #make it so we have a fallback for user prefrences based on their saved prefrence games if the user has no playing or completed games

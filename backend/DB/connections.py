@@ -7,6 +7,12 @@ import mysql.connector
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 load_dotenv(_REPO_ROOT / ".env")
 load_dotenv()
+"""
+    Written by: Ayush 
+    Tested by: Jake
+    Debugged by: Alec
+    Commented and refactored by: Ali
+"""
 
 #load env file, try and connect to the DB, return said connection or error
 def get_connection():

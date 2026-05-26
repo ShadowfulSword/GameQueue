@@ -1,4 +1,9 @@
-
+"""
+    Written by: Ayush & Ali
+    Tested by: Ayush & Ali
+    Debugged by: Ayush & Ali
+    Commented and refactored by: Ayush & Ali
+"""
 #take in all of the pased games and make it a list of dictionaries with only name, app_id and playtime
 def parser(passed_games):
     parsed_games = []

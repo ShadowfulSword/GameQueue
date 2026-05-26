@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Barlow:wght@300;400;500&display=swap');
-
+/*
+// Written by: Ayush
+// Tested by: Jake
+// Debugged by: Alec
+*/
 .pageWrapper {
   display: flex;
   flex-direction: column;

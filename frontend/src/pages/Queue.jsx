@@ -3,6 +3,12 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { getReccomendation, updateGameStatus } from '../api/index.js'
 import styles from './Queue.module.css'
 
+// Written by: Alec
+// Tested by: Ali
+// Debugged by: Ayush
+// Commented and Refactored by: Jake 
+
+//Queue page that shows the top 5 recommened games
 export default function Queue() {
   const [recommendations, setRecommendations] = useState([])
   const [loading, setLoading] = useState(true)
@@ -10,6 +16,7 @@ export default function Queue() {
   const location = useLocation()
   const userId = location.state?.user_id ?? 1
 
+  //fetch reccomendations and stop loading on success or fail on setup
   useEffect(() => {
     getReccomendation(userId)
       .then(data => {

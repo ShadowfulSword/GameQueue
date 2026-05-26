@@ -6,16 +6,24 @@ import GenreSelect from './pages/GenreSelect.jsx'
 import StatusSetup from './pages/StatusSetup.jsx'
 import Profile from './pages/Profile.jsx'
 
+// Written by: Alec
+// Tested by: Ayush
+// Debugged by: Ali
+// Commented and Refactored by: Jake 
+
+
+//Root component that sets up the client page navigation
+//Each route maps to the url so [ip]/route
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Landing />} />
-        <Route path='/library' element={<Library />} />
-        <Route path="/queue" element={<Queue />} />
-        <Route path="/genre-select" element={<GenreSelect />} />
-        <Route path="/status-setup" element={<StatusSetup />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path='/' element={<Landing />} />                      {/* Enter SteamID and Import lib*/}
+        <Route path='/library' element={<Library />} />               {/*User's game library with filters and updating game status */}
+        <Route path="/queue" element={<Queue />} />                   {/*Top 5 reccomended games */}
+        <Route path="/genre-select" element={<GenreSelect />} />      {/*Onboarding process: genre prefrences*/}
+        <Route path="/status-setup" element={<StatusSetup />} />      {/*Onboarding process: sort game status*/}
+        <Route path="/profile" element={<Profile />} />               {/*User profile and changing the genre prefrences*/}
       </Routes>
 
     </BrowserRouter>

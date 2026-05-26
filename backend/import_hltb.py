@@ -5,6 +5,13 @@ from DB.connections import get_connection
 from dotenv import load_dotenv
 import re
 
+"""
+    Written by: Ayush & Ali
+    Tested by: Ayush & Ali
+    Debugged by: Ayush & Ali
+    Commented and refactored by: Ayush & Ali
+"""
+
 _REPO_ROOT = Path(__file__).resolve().parent
 load_dotenv(_REPO_ROOT / ".env")
 load_dotenv()

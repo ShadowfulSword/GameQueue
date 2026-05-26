@@ -6,6 +6,12 @@ import time
 #apikey = os.getenv("STEAM_API_KEY")
 #steamid = os.getenv("STEAM_ID")
 
+"""
+    Written by: Ayush & Ali
+    Tested by: Ayush & Ali
+    Debugged by: Ayush & Ali
+    Commented and refactored by: Ayush & Ali
+"""
 
 #make a call to the STEAM API, then if you get a response add games to a list of games, return games
     #raise the errors: 

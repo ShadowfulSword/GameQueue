@@ -11,6 +11,12 @@ from typing import Literal
 import os
 from import_hltb import import_hltb
 
+"""
+    Written by: Ayush & Ali
+    Tested by: Alec
+    Debugged by: Ayush
+    Commented and refactored by: Jake
+"""
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 load_dotenv(_REPO_ROOT / ".env")
