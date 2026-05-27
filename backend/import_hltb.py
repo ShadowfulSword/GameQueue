@@ -4,11 +4,14 @@ from DB.queries import update_hltb_cache, update_game_details
 from DB.connections import get_connection
 from dotenv import load_dotenv
 import re
+import os
 
-
-#_REPO_ROOT = Path(__file__).resolve().parent
-#load_dotenv(_REPO_ROOT / ".env")
 load_dotenv()
+
+CSV_PATH = Path(os.getenv("HLTB_CSV_PATH", Path(__file__).resolve().parent / "hltb_data.csv"))
+print("CSV EXISTS:", CSV_PATH.exists())
+
+#load_dotenv()
 
 #get all games from the DB where the HLTB doesnt have a time associated with it
 def get_all_games():
@@ -39,7 +42,8 @@ def is_valid(val):
 #from the csv get the times and add it to the backend
 def import_hltb(csv_path=None):
     if(csv_path is None):
-        csv_path = _REPO_ROOT / "hltb_data.csv"
+        csv_path = CSV_PATH
+
     df = pd.read_csv(csv_path, low_memory=False)
     df['name_clean'] = df['game_game_name'].apply(clean)
 

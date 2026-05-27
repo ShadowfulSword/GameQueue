@@ -46,8 +46,7 @@ def importlib(steam_id: str):
     user_id = result.get("user_id")
     if user_id is None:
         raise HTTPException(status_code=500, detail="Import finished without user_id")
-    if new_game_ids:
-        import_hltb()
+    import_hltb()
     print("IS NEW USER: ", is_new_user)
     return {
         "message": "Library imported successfully",
@@ -75,7 +74,7 @@ def recommendations(user_id: int):
     try:
         return {"recommendations": get_recommendations(user_id)}
     except Exception as e:
-        traceback.print_exc()  # 🔴 THIS is what you’re missing
+        traceback.print_exc() 
         raise HTTPException(status_code=500, detail=str(e))
 
 #Get all the generes for filtering
