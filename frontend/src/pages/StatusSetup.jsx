@@ -3,10 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { getLibrary, saveStatuses } from '../api/index.js'
 import styles from './StatusSetup.module.css'
 
-// Written by: Jake
-// Tested by: Alec
-// Debugged by: Ali
-// Commented and Refactored by: Ayush 
+
 
 //Second onboarding page let the user drag their games into proper buckets
 //The sstatuses are setup on this page and fed into prefrences in the DB

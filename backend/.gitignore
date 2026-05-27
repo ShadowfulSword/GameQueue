@@ -3,3 +3,6 @@
 __pycache__/
 *.pyc
 *.pyo
+test_gamequeue.py
+test_integration.py
+README_tests.txt

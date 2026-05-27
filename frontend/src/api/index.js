@@ -1,6 +1,3 @@
-// Written by: Alec
-// Tested by: Jake
-// Debugged by: Ayush
 
 import axios from 'axios'
 const api = axios.create({

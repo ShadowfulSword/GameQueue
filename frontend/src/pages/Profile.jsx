@@ -3,10 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { getLibraryGenres, savePreferences, getSavedPreferences } from '../api/index.js'
 import styles from './Profile.module.css'
 
-// Written by: Ali
-// Tested by: Ayush
-// Debugged by: Jake
-// Commented and Refactored by: Alec 
+
 
 //Profile page where users can see and change prefrences
 //Changes here directly affect the reccomendations and update the DB

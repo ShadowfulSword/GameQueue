@@ -3,10 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { getLibraryGenres, savePreferences } from '../api/index.js'
 import styles from './GenreSelect.module.css'
 
-// Written by: Alec
-// Tested by: Ali
-// Debugged by: Jake
-// Commented and Refactored by: Ayush 
+
 
 //GenreSelect onboarding page
 //Genres are pulled from the user library table 

@@ -6,10 +6,7 @@ import GenreSelect from './pages/GenreSelect.jsx'
 import StatusSetup from './pages/StatusSetup.jsx'
 import Profile from './pages/Profile.jsx'
 
-// Written by: Alec
-// Tested by: Ayush
-// Debugged by: Ali
-// Commented and Refactored by: Jake 
+
 
 
 //Root component that sets up the client page navigation

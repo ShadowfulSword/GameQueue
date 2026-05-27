@@ -2,10 +2,6 @@ import { useState } from "react";
 import styles from './Landing.module.css'
 import { importLibrary } from "../api/index.js";
 import { useNavigate } from 'react-router-dom'
-// Written by: Jake
-// Tested by: Alec
-// Debugged by: Ali
-// Commented and Refactored by: Ayush 
 
 //Entry page for users to input Steam ID and import library
 export default function Landing() {

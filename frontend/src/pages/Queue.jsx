@@ -3,10 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { getReccomendation, updateGameStatus } from '../api/index.js'
 import styles from './Queue.module.css'
 
-// Written by: Alec
-// Tested by: Ali
-// Debugged by: Ayush
-// Commented and Refactored by: Jake 
+
 
 //Queue page that shows the top 5 recommened games
 export default function Queue() {

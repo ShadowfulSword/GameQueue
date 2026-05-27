@@ -6,16 +6,10 @@ from algorithm.recommender import get_recommendations
 from dotenv import load_dotenv
 import os
 
-"""
-    Written by: Jake
-    Tested by: Alec
-    Debugged by: Ali
-    Commented and refactored by: Ayush
-"""
 
 
-_REPO_ROOT = Path(__file__).resolve().parents[2]
-load_dotenv(_REPO_ROOT / ".env")
+#_REPO_ROOT = Path(__file__).resolve().parents[2]
+#load_dotenv(_REPO_ROOT / ".env")
 load_dotenv()
 apikey = os.getenv("STEAM_API_KEY")
 steamid = os.getenv("STEAM_ID")

@@ -3,10 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { getLibrary, updateGameStatus, getLibraryGenres } from '../api/index.js'
 import styles from './Library.module.css'
 
-// Written by: Ayush
-// Tested by: Jake
-// Debugged by: Alec
-// Commented and Refactored by: Ali 
+
 
 //Main library page to show the full library and allow filtering opptions
 export default function Library() {

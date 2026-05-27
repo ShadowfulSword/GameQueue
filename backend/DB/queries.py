@@ -1,12 +1,7 @@
 from DB.connections import get_connection
 from datetime import datetime
 
-"""
-    Written by: Ayush & Ali
-    Tested by: Ayush & Ali
-    Debugged by: Ayush & Ali
-    Commented and refactored by: Ayush & Ali
-"""
+
 
 def _cursor(conn):
     if conn is None:
